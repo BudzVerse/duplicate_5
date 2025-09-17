@@ -1,0 +1,127 @@
+<!doctype html>
+
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Peta Dunia Interaktif</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2H0kq5Qv5gk3QkNqvQYk2kG4g7rjYw+3j0z4wYQ=" crossorigin="" />
+  <style>
+    html,body,#map { height:100%; margin:0; padding:0; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+    #topbar{ position:absolute; left:10px; top:10px; z-index:1000; background:rgba(255,255,255,0.95); padding:8px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.12);} 
+    #search{ width:260px; }
+    .hint{ font-size:12px; color:#333; opacity:0.7 }
+  </style>
+</head>
+<body>
+  <div id="topbar">
+    <div style="display:flex; gap:8px; align-items:center">
+      <input id="search" placeholder="Cari tempat (mis. Jakarta)" />
+      <button id="btnSearch">Cari</button>
+      <button id="btnLocate">Lokasi Saya</button>
+    </div>
+    <div class="hint">Klik peta untuk lihat koordinat. Tekan hasil pencarian untuk pindah ke sana.</div>
+  </div>
+  <div id="map"></div>  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1j7k2GQ3qIo5Q6u2b9r+V7s3w5gk7gP7r3m0UuVw=" crossorigin=""></script>  <script>
+    const map = L.map('map', { worldCopyJump: true }).setView([0,0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // marker layer group
+    const layer = L.layerGroup().addTo(map);
+
+    // click handler: add marker with coords and link
+    map.on('click', (e) => {
+      layer.clearLayers();
+      const { lat, lng } = e.latlng;
+      const m = L.marker([lat,lng]).addTo(layer);
+      const gmap = `https://www.google.com/maps?q=${lat},${lng}`;
+      m.bindPopup(`<b>Koordinat</b><br>Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}<br><a href="${gmap}" target="_blank">Buka di Google Maps</a>`).openPopup();
+    });
+
+    // Geolocation
+    document.getElementById('btnLocate').addEventListener('click', () => {
+      if (!navigator.geolocation) return alert('Geolocation tidak didukung di browser ini.');
+      navigator.geolocation.getCurrentPosition(pos => {
+        const { latitude, longitude } = pos.coords;
+        map.setView([latitude, longitude], 13);
+        layer.clearLayers();
+        L.marker([latitude, longitude]).addTo(layer).bindPopup('<b>Lokasi Anda</b>').openPopup();
+      }, err => alert('Gagal mendapatkan lokasi: ' + err.message));
+    });
+
+    // Simple Nominatim search
+    async function nominatimSearch(q){
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=6`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'id-ID' } });
+      const data = await res.json();
+      return data;
+    }
+
+    // show search results in a small popup-like menu
+    function showResults(items){
+      let menu = document.getElementById('searchMenu');
+      if(menu) menu.remove();
+      menu = document.createElement('div');
+      menu.id = 'searchMenu';
+      menu.style.position = 'absolute';
+      menu.style.left = '10px';
+      menu.style.top = '62px';
+      menu.style.zIndex = 1200;
+      menu.style.background = 'white';
+      menu.style.border = '1px solid rgba(0,0,0,0.08)';
+      menu.style.borderRadius = '6px';
+      menu.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)';
+      menu.style.padding = '6px';
+      menu.style.maxHeight = '240px';
+      menu.style.overflow = 'auto';
+
+      if(items.length===0){
+        const e = document.createElement('div');
+        e.style.padding='8px';
+        e.textContent = 'Tidak ada hasil.';
+        menu.appendChild(e);
+      }
+
+      items.forEach(it => {
+        const el = document.createElement('div');
+        el.style.padding='8px';
+        el.style.cursor='pointer';
+        el.style.borderBottom='1px solid rgba(0,0,0,0.04)';
+        el.innerHTML = `<b>${it.display_name.split(',')[0]}</b><div style="font-size:12px;opacity:0.8">${it.display_name}</div>`;
+        el.addEventListener('click', () => {
+          map.setView([parseFloat(it.lat), parseFloat(it.lon)], 13);
+          layer.clearLayers();
+          L.marker([parseFloat(it.lat), parseFloat(it.lon)]).addTo(layer).bindPopup(it.display_name).openPopup();
+          menu.remove();
+        });
+        menu.appendChild(el);
+      });
+
+      document.body.appendChild(menu);
+    }
+
+    document.getElementById('btnSearch').addEventListener('click', async () => {
+      const q = document.getElementById('search').value.trim();
+      if(!q) return;
+      try{
+        const res = await nominatimSearch(q);
+        showResults(res);
+      }catch(e){
+        alert('Error saat mencari: ' + e.message);
+      }
+    });
+
+    // Enter key on search
+    document.getElementById('search').addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Enter'){ ev.preventDefault(); document.getElementById('btnSearch').click(); }
+    });
+
+    // small credits control
+    L.control.attribution({ prefix: false }).addAttribution('Peta: OpenStreetMap').addTo(map);
+  </script></body>
+</html>
