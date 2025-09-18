@@ -1,59 +1,79 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html><html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <title>Peta Dunia Interaktif</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Peta Dunia dengan Waktu</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
   <style>
-    body { margin: 0; padding: 0; }
-    #map { height: 100vh; width: 100vw; }
+    #map { height: 100vh; width: 100%; }
   </style>
 </head>
 <body>
   <div id="map"></div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map').setView([20, 0], 2);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '© OpenStreetMap'
-}).addTo(map);
+    // Tile layers
+    let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    });let satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+  subdomains: ['mt0','mt1','mt2','mt3'],
+  attribution: '© Google Maps'
+});
 
-let marker;
-let interval;
+let terrain = L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+  subdomains: ['mt0','mt1','mt2','mt3'],
+  attribution: '© Google Maps'
+});
 
-function updateClock(lat, lng, timezone, popup) {
-  if (interval) clearInterval(interval);
-  interval = setInterval(() => {
-    const now = moment().tz(timezone);
-    const timeString = now.format("DD MMM YYYY HH.mm.ss");
-    popup.setContent(
-      `<b>Koordinat:</b> ${lat.toFixed(4)}, ${lng.toFixed(4)}<br>` +
-      `<b>Zona Waktu:</b> ${timezone}<br>` +
-      `<b>Waktu:</b> ${timeString}`
-    );
-  }, 1000);
-}
+// Map init
+let map = L.map('map', {
+  center: [0, 0],
+  zoom: 2,
+  layers: [osm]
+});
 
+// Layer control
+let baseMaps = {
+  "OpenStreetMap": osm,
+  "Satelit": satellite,
+  "Medan": terrain
+};
+
+L.control.layers(baseMaps).addTo(map);
+
+// Event click untuk ambil waktu & koordinat
 map.on('click', async function(e) {
-  const lat = e.latlng.lat;
-  const lng = e.latlng.lng;
+  let lat = e.latlng.lat;
+  let lng = e.latlng.lng;
 
   try {
-    const res = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=LYUJ9RPVCZDF&format=json&by=position&lat=${lat}&lng=${lng}`);
-    const data = await res.json();
-    const timezone = data.zoneName || "Tidak diketahui";
+    let response = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=LYUJ9RPVCZDF&format=json&by=position&lat=${lat}&lng=${lng}`);
+    let data = await response.json();
 
-    if (marker) map.removeLayer(marker);
-    marker = L.marker([lat, lng]).addTo(map);
+    if (data.status === "OK") {
+      let date = new Date(data.timestamp * 1000);
+      function updateTime() {
+        let now = new Date();
+        let localTime = new Date(now.toLocaleString("en-US", { timeZone: data.zoneName }));
+        let timeString = localTime.toLocaleDateString('id-ID', {
+          day: '2-digit', month: 'short', year: 'numeric'
+        }) + ' ' + localTime.toLocaleTimeString('id-ID');
+        marker.setPopupContent(`
+          <b>Koordinat:</b> ${lat.toFixed(4)}, ${lng.toFixed(4)}<br>
+          <b>Zona Waktu:</b> ${data.zoneName}<br>
+          <b>Waktu:</b> ${timeString}
+        `);
+      }
 
-    const popup = L.popup().setLatLng([lat, lng]).openOn(map);
-    marker.bindPopup(popup).openPopup();
-
-    updateClock(lat, lng, timezone, popup);
+      let marker = L.marker([lat, lng]).addTo(map).bindPopup("Loading waktu...").openPopup();
+      updateTime();
+      setInterval(updateTime, 1000);
+    } else {
+      alert("Gagal mengambil data waktu");
+    }
   } catch (err) {
-    alert("Gagal mengambil zona waktu");
+    console.error(err);
+    alert("Error mengambil data waktu");
   }
 });
 
