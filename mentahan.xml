@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8' ?><!--    
+Created by Alight Motion (http://alightmotion.com)    
+Exported: YYYY-MM-DD HH:MM AM/PM    
+x.x.x.xxxxxx (build)    
+commit-id (Tanggal Build)    
+-->    
+<scene title="judul project" width="LEBAR" height="TINGGI" exportWidth="LEBAR EXPORT" exportHeight="TINGGI EXPORT" precompose="dynamicResolution" bgcolor="#00000000" totalTime="0" fps="FPS" modifiedTime="TIMESTAMP" amver="APPVER" ffver="FFVER" am="com.alightcreative.motion/x.x.x.xxxxxx" amplatform="android" retime="freeze" retimeAdaptFPS="false" />    
