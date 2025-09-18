@@ -15,7 +15,25 @@
     <div id="app"></div>
 
 <script>
-    const PASSWORD = "Desktop2025!";
+let PASSWORD = "";
+
+async function fetchPassword() {
+    try {
+        const response = await fetch("https://raw.githubusercontent.com/EmuVlucht/EmuVlucht/main/sandi.txt");
+        if (!response.ok) throw new Error("Gagal ambil sandi");
+        PASSWORD = (await response.text()).trim(); // trim supaya nggak ada spasi/line break
+    } catch (err) {
+        console.error("Error ambil sandi:", err);
+        PASSWORD = ""; // fallback kosong
+    }
+}
+
+async function setupApp() {
+    await fetchPassword(); // ambil sandi dulu
+    renderApp(); // render tampilan
+}
+
+document.addEventListener("DOMContentLoaded", setupApp);
 
     function isMobileDevice() {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
