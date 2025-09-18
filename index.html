@@ -10,73 +10,84 @@
 </head>
 <body>
   <div id="map"></div>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
+    // Deteksi perangkat mobile
+    function isMobile() {
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }if (isMobile()) {
+  document.body.innerHTML = `
+    <div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;font-family:sans-serif">
+      <h2>❌ Website ini hanya bisa diakses melalui Desktop / Laptop</h2>
+    </div>
+  `;
+  throw new Error("Blocked on mobile");
+}
+
+  </script>  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>  <script>
     // Tile layers
     let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap'
-    });let satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-  subdomains: ['mt0','mt1','mt2','mt3'],
-  attribution: '© Google Maps'
-});
+    });
 
-let terrain = L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
-  subdomains: ['mt0','mt1','mt2','mt3'],
-  attribution: '© Google Maps'
-});
+    let satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      subdomains: ['mt0','mt1','mt2','mt3'],
+      attribution: '© Google Maps'
+    });
 
-// Map init
-let map = L.map('map', {
-  center: [0, 0],
-  zoom: 2,
-  layers: [osm]
-});
+    let terrain = L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+      subdomains: ['mt0','mt1','mt2','mt3'],
+      attribution: '© Google Maps'
+    });
 
-// Layer control
-let baseMaps = {
-  "OpenStreetMap": osm,
-  "Satelit": satellite,
-  "Medan": terrain
-};
+    // Map init
+    let map = L.map('map', {
+      center: [0, 0],
+      zoom: 2,
+      layers: [osm]
+    });
 
-L.control.layers(baseMaps).addTo(map);
+    // Layer control
+    let baseMaps = {
+      "OpenStreetMap": osm,
+      "Satelit": satellite,
+      "Medan": terrain
+    };
 
-// Event click untuk ambil waktu & koordinat
-map.on('click', async function(e) {
-  let lat = e.latlng.lat;
-  let lng = e.latlng.lng;
+    L.control.layers(baseMaps).addTo(map);
 
-  try {
-    let response = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=LYUJ9RPVCZDF&format=json&by=position&lat=${lat}&lng=${lng}`);
-    let data = await response.json();
+    // Event click untuk ambil waktu & koordinat
+    map.on('click', async function(e) {
+      let lat = e.latlng.lat;
+      let lng = e.latlng.lng;
 
-    if (data.status === "OK") {
-      let date = new Date(data.timestamp * 1000);
-      function updateTime() {
-        let now = new Date();
-        let localTime = new Date(now.toLocaleString("en-US", { timeZone: data.zoneName }));
-        let timeString = localTime.toLocaleDateString('id-ID', {
-          day: '2-digit', month: 'short', year: 'numeric'
-        }) + ' ' + localTime.toLocaleTimeString('id-ID');
-        marker.setPopupContent(`
-          <b>Koordinat:</b> ${lat.toFixed(4)}, ${lng.toFixed(4)}<br>
-          <b>Zona Waktu:</b> ${data.zoneName}<br>
-          <b>Waktu:</b> ${timeString}
-        `);
+      try {
+        let response = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=LYUJ9RPVCZDF&format=json&by=position&lat=${lat}&lng=${lng}`);
+        let data = await response.json();
+
+        if (data.status === "OK") {
+          function updateTime() {
+            let now = new Date();
+            let localTime = new Date(now.toLocaleString("en-US", { timeZone: data.zoneName }));
+            let timeString = localTime.toLocaleDateString('id-ID', {
+              day: '2-digit', month: 'short', year: 'numeric'
+            }) + ' ' + localTime.toLocaleTimeString('id-ID');
+            marker.setPopupContent(`
+              <b>Koordinat:</b> ${lat.toFixed(4)}, ${lng.toFixed(4)}<br>
+              <b>Zona Waktu:</b> ${data.zoneName}<br>
+              <b>Waktu:</b> ${timeString}
+            `);
+          }
+
+          let marker = L.marker([lat, lng]).addTo(map).bindPopup("Loading waktu...").openPopup();
+          updateTime();
+          setInterval(updateTime, 1000);
+        } else {
+          alert("Gagal mengambil data waktu");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error mengambil data waktu");
       }
-
-      let marker = L.marker([lat, lng]).addTo(map).bindPopup("Loading waktu...").openPopup();
-      updateTime();
-      setInterval(updateTime, 1000);
-    } else {
-      alert("Gagal mengambil data waktu");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Error mengambil data waktu");
-  }
-});
-
-  </script>
-</body>
+    });
+  </script></body>
 </html>
