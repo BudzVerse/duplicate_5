@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", setupApp);
         setupPasswordFormLogic();
     }
 
-    document.addEventListener("DOMContentLoaded", () => renderApp());
+    document.addEventListener("DOMContentLoaded", setupApp);
     window.addEventListener("resize", () => {
         clearTimeout(window._resizeTimeout);
         window._resizeTimeout = setTimeout(() => {
