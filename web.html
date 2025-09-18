@@ -20,7 +20,7 @@
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             // Deteksi ukuran layar (lebar kurang dari 1024px dianggap mobile)
-            const isSmallScreen = window.innerWidth < 124;
+            const isSmallScreen = window.innerWidth < 1024;
             
             // Return true jika bukan mobile dan bukan layar kecil
             return !isMobile && !isSmallScreen;
