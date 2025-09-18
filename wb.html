@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Desktop Only with Password</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+  <div id="app"></div>
+
+  <script>
+    const PASSWORD = "rahasia123"; // Ganti dengan sandi yang diinginkan
+
+    function isDesktop() {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isSmallScreen = window.innerWidth < 1024;
+      return !isMobile && !isSmallScreen;
+    }
+
+    function renderDesktopContent() {
+      return `
+        <div class="min-h-screen bg-white">
+          <header class="bg-blue-600 text-white py-6">
+            <div class="container mx-auto px-6">
+              <h1 class="text-2xl font-bold">Website Desktop Only</h1>
+            </div>
+          </header>
+          <main class="container mx-auto px-6 py-12">
+            <h2 class="text-3xl font-bold mb-4">Selamat Datang di Website Desktop Only</h2>
+            <p class="mb-8">Anda berhasil mengakses website ini.</p>
+          </main>
+        </div>
+      `;
+    }
+
+    function renderPasswordForm(errorMessage = "") {
+      return `
+        <div class="min-h-screen flex items-center justify-center p-6 bg-gray-100">
+          <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
+            <h1 class="text-2xl font-bold mb-4">Masukkan Sandi untuk Akses</h1>
+            <input id="passwordInput" type="password" placeholder="Sandi" class="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button id="submitBtn" class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition">Masuk</button>
+            ${errorMessage ? `<p class="text-red-600 mt-4">${errorMessage}</p>` : ""}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBlockedMessage() {
+      return `
+        <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
+            <p class="text-gray-600">Website ini dirancang khusus untuk pengalaman desktop. Silakan akses menggunakan komputer desktop atau laptop untuk melanjutkan.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderApp(errorMessage = "") {
+      const app = document.getElementById("app");
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isSmallScreen = window.innerWidth < 1024;
+
+      if (isMobile) {
+        app.innerHTML = renderBlockedMessage();
+        return;
+      }
+
+      if (!isSmallScreen) {
+        // Desktop besar, langsung tampilkan konten
+        app.innerHTML = renderDesktopContent();
+        return;
+      }
+
+      // Layar kecil tapi bukan mobile, tampilkan form sandi
+      app.innerHTML = renderPasswordForm(errorMessage);
+
+      // Pasang event listener tombol submit
+      const submitBtn = document.getElementById("submitBtn");
+      const passwordInput = document.getElementById("passwordInput");
+
+      submitBtn.addEventListener("click", () => {
+        const enteredPassword = passwordInput.value;
+        if (enteredPassword === PASSWORD) {
+          app.innerHTML = renderDesktopContent();
+        } else {
+          renderApp("Sandi salah, silakan coba lagi.");
+        }
+      });
+
+      // Optional: submit dengan Enter key
+      passwordInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          submitBtn.click();
+        }
+      });
+    }
+
+    // Render saat halaman dimuat
+    window.addEventListener("DOMContentLoaded", () => renderApp());
+
+    // Render ulang saat resize
+    window.addEventListener("resize", () => renderApp());
+  </script>
+</body>
+</html>
