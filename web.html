@@ -14,202 +14,227 @@
 <body class="bg-gray-50 font-sans">
     <div id="app"></div>
 
-    <script>
-        const PASSWORD = "Desktop2025!"; // Ganti dengan sandi yang diinginkan
+<script>
+    const PASSWORD = "Desktop2025!";
 
-        function isDesktopDevice() {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isSmallScreen = window.innerWidth < 1024;
-            return !isMobile && !isSmallScreen;
-        }
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
 
-        function renderPasswordForm(errorMessage = "") {
-            return `
-            <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-                <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
-                    <p class="text-gray-600 mb-6">
-                        Website ini dirancang khusus untuk pengalaman desktop. Silakan akses menggunakan komputer desktop atau laptop untuk melanjutkan.
-                    </p>
+    function renderPasswordForm() {
+        return `
+        <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center w-full">
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
+                <p class="text-gray-600 mb-6">
+                    Website ini dirancang khusus untuk pengalaman desktop. Silakan akses menggunakan komputer desktop atau laptop untuk melanjutkan.
+                </p>
 
-            <div class="bg-gray-100 p-6 rounded-lg mt-6">
-                <h2 class="text-xl font-bold mb-4">
-                    Masukkan 
-                    <a href="https://raw.githubusercontent.com/EmuVlucht/EmuVlucht/main/sandi.txt" target="_blank" class="text-blue-600 underline hover:text-blue-800">
-                        Sandi
-                    </a> 
-                    untuk Akses
-                </h2>
-                <input id="passwordInput" type="password" placeholder="Sandi" 
-                    class="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <button id="submitBtn" 
-                    class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition">
-                    Masuk
-                </button>
-                ${errorMessage ? `<p class="text-red-600 mt-4">${errorMessage}</p>` : ""}
+                <div class="bg-gray-100 p-6 rounded-lg mt-6">
+                    <h2 class="text-xl font-bold mb-4">
+                        Masukkan 
+                        <a href="https://raw.githubusercontent.com/EmuVlucht/EmuVlucht/main/sandi.txt" target="_blank" class="text-blue-600 underline hover:text-blue-800">
+                            Sandi
+                        </a> 
+                        untuk Akses
+                    </h2>
+                    <input id="passwordInput" type="password" placeholder="Sandi" 
+                        autocomplete="off" inputmode="text"
+                        class="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <button id="submitBtn" 
+                        class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition">
+                        Masuk
+                    </button>
+                    <p id="errorMsg" class="text-red-600 mt-4 hidden"></p>
+                </div>
             </div>
         </div>
-    </div>
-    `;
-}
+        `;
+    }
 
-        function renderDesktopContent() {
-            return `
-            <div class="min-h-screen bg-white">
-                <header class="bg-blue-600 text-white py-6">
-                    <div class="container mx-auto px-6 flex justify-between items-center">
-                        <h1 class="text-2xl font-bold">Website Desktop Only</h1>
-                        <nav class="flex space-x-6">
-                            <a href="#" class="hover:text-blue-200 transition-colors">Beranda</a>
-                            <a href="#" class="hover:text-blue-200 transition-colors">Tentang</a>
-                            <a href="#" class="hover:text-blue-200 transition-colors">Layanan</a>
-                            <a href="#" class="hover:text-blue-200 transition-colors">Kontak</a>
-                        </nav>
-                    </div>
-                </header>
+    function renderDesktopContent() {
+        return `
+        <div class="min-h-screen bg-white">
+            <header class="bg-blue-600 text-white py-6">
+                <div class="container mx-auto px-6 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold">Website Desktop Only</h1>
+                    <nav class="flex space-x-6">
+                        <a href="#" class="hover:text-blue-200 transition-colors">Beranda</a>
+                        <a href="#" class="hover:text-blue-200 transition-colors">Tentang</a>
+                        <a href="#" class="hover:text-blue-200 transition-colors">Layanan</a>
+                        <a href="#" class="hover:text-blue-200 transition-colors">Kontak</a>
+                    </nav>
+                </div>
+            </header>
 
-                <main class="container mx-auto px-6 py-12">
-                    <section class="text-center mb-16">
-                        <div class="max-w-3xl mx-auto">
-                            <div class="bg-gray-200 rounded-lg h-64 mb-8 flex items-center justify-center">
-                                <p class="text-gray-500">Gambar Desktop</p>
-                            </div>
-                            <h2 class="text-4xl font-bold text-gray-800 mb-4">
-                                Selamat Datang di Website Desktop Only
-                            </h2>
-                            <p class="text-xl text-gray-600 mb-8">
-                                Website ini dirancang khusus untuk memberikan pengalaman terbaik pada perangkat desktop
-                            </p>
-                            <button class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                                Mulai Jelajahi
-                            </button>
+            <main class="container mx-auto px-6 py-12">
+                <section class="text-center mb-16">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="bg-gray-200 rounded-lg h-64 mb-8 flex items-center justify-center">
+                            <p class="text-gray-500">Gambar Desktop</p>
                         </div>
-                    </section>
-
-                    <section class="grid md:grid-cols-3 gap-8 mb-16">
-                        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                                <span class="text-blue-600 font-bold text-xl">1</span>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Fitur Unggulan</h3>
-                            <p class="text-gray-600">Nikmati fitur-fitur canggih yang hanya tersedia untuk pengguna desktop dengan antarmuka yang optimal.</p>
-                        </div>
-
-                        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                                <span class="text-blue-600 font-bold text-xl">2</span>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Pengalaman Desktop</h3>
-                            <p class="text-gray-600">Interface yang dirancang khusus untuk layar besar dengan navigasi yang intuitif dan mudah digunakan.</p>
-                        </div>
-
-                        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                                <span class="text-blue-600 font-bold text-xl">3</span>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Perform Optimal</h3>
-                            <p class="text-gray-600">Dapatkan performa terbaik dengan resource yang dioptimalkan untuk perangkat desktop.</p>
-                        </div>
-                    </section>
-
-                    <section class="bg-gray-100 rounded-lg p-8 text-center">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Siap Memulai?</h2>
-                        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
-                            Bergabunglah dengan komunitas pengguna desktop kami dan nikmati pengalaman browsing yang lebih baik.
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">
+                            Selamat Datang di Website Desktop Only
+                        </h2>
+                        <p class="text-xl text-gray-600 mb-8">
+                            Website ini dirancang khusus untuk memberikan pengalaman terbaik pada perangkat desktop
                         </p>
-                        <div class="flex justify-center space-x-4">
-                            <button class="bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors">Daftar Sekarang</button>
-                            <button class="border border-gray-300 bg-white text-gray-800 px-6 py-2 rounded-md font-medium hover:bg-gray-50 transition-colors">Pelajari Lebih Lanjut</button>
-                        </div>
-                    </section>
-                </main>
+                        <button class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            Mulai Jelajahi
+                        </button>
+                    </div>
+                </section>
 
-                <footer class="bg-gray-100 border-t border-gray-200 mt-16 py-8">
-                    <div class="container mx-auto px-6 grid md:grid-cols-3 gap-8">
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-4">Desktop Only</h4>
-                            <p class="text-gray-600 text-sm">Website khusus desktop dengan pengalaman pengguna terbaik untuk perangkat komputer.</p>
+                <section class="grid md:grid-cols-3 gap-8 mb-16">
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <span class="text-blue-600 font-bold text-xl">1</span>
                         </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-4">Tautan Cepat</h4>
-                            <ul class="space-y-2 text-sm">
-                                <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Beranda</a></li>
-                                <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Tentang</a></li>
-                                <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Kebijakan Privasi</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-4">Kontak</h4>
-                            <p class="text-gray-600 text-sm">Email: info@desktoponly.com<br>Phone: (021) 1234-5678</p>
-                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Fitur Unggulan</h3>
+                        <p class="text-gray-600">Nikmati fitur-fitur canggih yang hanya tersedia untuk pengguna desktop dengan antarmuka yang optimal.</p>
                     </div>
-                    <div class="border-t border-gray-200 mt-8 pt-6 text-center">
-                        <p class="text-gray-600 text-sm">© 2024 Desktop Only Website. Hak Cipta Dilindungi.</p>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <span class="text-blue-600 font-bold text-xl">2</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Pengalaman Desktop</h3>
+                        <p class="text-gray-600">Interface yang dirancang khusus untuk layar besar dengan navigasi yang intuitif dan mudah digunakan.</p>
                     </div>
-                </footer>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <span class="text-blue-600 font-bold text-xl">3</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Perform Optimal</h3>
+                        <p class="text-gray-600">Dapatkan performa terbaik dengan resource yang dioptimalkan untuk perangkat desktop.</p>
+                    </div>
+                </section>
+
+                <section class="bg-gray-100 rounded-lg p-8 text-center">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Siap Memulai?</h2>
+                    <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                        Bergabunglah dengan komunitas pengguna desktop kami dan nikmati pengalaman browsing yang lebih baik.
+                    </p>
+                    <div class="flex justify-center space-x-4">
+                        <button class="bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors">Daftar Sekarang</button>
+                        <button class="border border-gray-300 bg-white text-gray-800 px-6 py-2 rounded-md font-medium hover:bg-gray-50 transition-colors">Pelajari Lebih Lanjut</button>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="bg-gray-100 border-t border-gray-200 mt-16 py-8">
+                <div class="container mx-auto px-6 grid md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-4">Desktop Only</h4>
+                        <p class="text-gray-600 text-sm">Website khusus desktop dengan pengalaman pengguna terbaik untuk perangkat komputer.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-4">Tautan Cepat</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Beranda</a></li>
+                            <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Tentang</a></li>
+                            <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Kebijakan Privasi</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-4">Kontak</h4>
+                        <p class="text-gray-600 text-sm">Email: info@desktoponly.com<br>Phone: (021) 1234-5678</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 mt-8 pt-6 text-center">
+                    <p class="text-gray-600 text-sm">© 2024 Desktop Only Website. Hak Cipta Dilindungi.</p>
+                </div>
+            </footer>
+        </div>
+        `;
+    }
+
+    function renderMobileMessage() {
+        return `
+        <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center">
+                <div class="mb-6">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                        <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
+                    <p class="text-gray-600">Website ini dirancang khusus untuk pengalaman desktop. Silakan akses menggunakan komputer desktop atau laptop untuk melanjutkan.</p>
+                </div>
+                <div class="bg-gray-100 p-4 rounded-md">
+                    <p class="text-sm text-gray-500"><strong>Tip:</strong> Periksa ukuran layar Anda atau coba akses dari perangkat desktop.</p>
+                </div>
             </div>
-            `;
+        </div>`;
+    }
+
+    // Variabel untuk menyimpan state tampilan saat ini
+    let currentView = null;
+
+    function getView() {
+        const isMobile = isMobileDevice();
+        const isSmallScreen = window.innerWidth < 1024;
+        if (isMobile) return "mobile";
+        if (!isSmallScreen) return "desktopLarge";
+        return "desktopSmall";
+    }
+
+    function setupPasswordFormLogic() {
+        const submitBtn = document.getElementById("submitBtn");
+        const passwordInput = document.getElementById("passwordInput");
+        const errorMsg = document.getElementById("errorMsg");
+
+        // Fokus otomatis supaya keyboard muncul
+        setTimeout(() => passwordInput.focus(), 100);
+
+        submitBtn.addEventListener("click", () => {
+            const enteredPassword = passwordInput.value;
+            if (enteredPassword === PASSWORD) {
+                document.getElementById("app").innerHTML = renderDesktopContent();
+            } else {
+                errorMsg.textContent = "Sandi salah, silakan coba lagi.";
+                errorMsg.classList.remove("hidden");
+                passwordInput.focus();
+            }
+        });
+
+        passwordInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") submitBtn.click();
+        });
+    }
+
+    function renderApp() {
+        const app = document.getElementById("app");
+        const view = getView();
+
+        if (view === currentView) return; // Tidak render ulang jika view sama
+
+        currentView = view;
+
+        if (view === "mobile") {
+            app.innerHTML = renderMobileMessage();
+            return;
         }
 
-        function renderApp(errorMessage = "") {
-            const app = document.getElementById("app");
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isSmallScreen = window.innerWidth < 1024;
-
-            if (isMobile) {
-                // Tampilan mobile
-                app.innerHTML = `
-                <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center">
-                        <div class="mb-6">
-                            <div class="w-20 h-20 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
-                                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                </svg>
-                            </div>
-                            <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
-                            <p class="text-gray-600">Website ini dirancang khusus untuk pengalaman desktop. Silakan akses menggunakan komputer desktop atau laptop untuk melanjutkan.</p>
-                        </div>
-                        <div class="bg-gray-100 p-4 rounded-md">
-                            <p class="text-sm text-gray-500"><strong>Tip:</strong> Periksa ukuran layar Anda atau coba akses dari perangkat desktop.</p>
-                        </div>
-                    </div>
-                </div>`;
-                return;
-            }
-
-            if (!isSmallScreen) {
-                // Desktop besar ≥1024px
-                app.innerHTML = renderDesktopContent();
-                return;
-            }
-
-            // Desktop kecil <1024px, tampilkan password form
-            app.innerHTML = renderPasswordForm(errorMessage);
-
-            // Pasang event listener
-            const submitBtn = document.getElementById("submitBtn");
-            const passwordInput = document.getElementById("passwordInput");
-
-            // Fokus otomatis supaya keyboard muncul
-            setTimeout(() => passwordInput.focus(), 100);
-
-            submitBtn.addEventListener("click", () => {
-                const enteredPassword = passwordInput.value;
-                if (enteredPassword === PASSWORD) {
-                    app.innerHTML = renderDesktopContent();
-                } else {
-                    renderApp("Sandi salah, silakan coba lagi.");
-                }
-            });
-
-            passwordInput.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") submitBtn.click();
-            });
+        if (view === "desktopLarge") {
+            app.innerHTML = renderDesktopContent();
+            return;
         }
 
-        document.addEventListener("DOMContentLoaded", () => renderApp());
-        window.addEventListener("resize", () => renderApp());
-    </script>
+        // desktopSmall
+        app.innerHTML = renderPasswordForm();
+        setupPasswordFormLogic();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => renderApp());
+    window.addEventListener("resize", () => {
+        clearTimeout(window._resizeTimeout);
+        window._resizeTimeout = setTimeout(() => {
+            renderApp();
+        }, 200);
+    });
+</script>
 </body>
 </html>
