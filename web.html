@@ -15,7 +15,7 @@
     <div id="app"></div>
 
     <script>
-        const PASSWORD = "rahasia123"; // Ganti dengan sandi yang diinginkan
+        const PASSWORD = "Desktop2025!"; // Ganti dengan sandi yang diinginkan
 
         function isDesktopDevice() {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -23,29 +23,7 @@
             return !isMobile && !isSmallScreen;
         }
 
-        function renderPasswordForm(errorMessage = "") {
-            return `
-            <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-                <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
-                    <p class="text-gray-600 mb-6">
-                        Website ini dirancang khusus untuk pengalaman desktop. Silakan akses menggunakan komputer desktop atau laptop untuk melanjutkan.
-                    </p>
-
-                    <div class="bg-gray-100 p-6 rounded-lg mt-6">
-                        <h2 class="text-xl font-bold mb-4">Masukkan Sandi untuk Akses</h2>
-                        <input id="passwordInput" type="password" placeholder="Sandi" 
-                            class="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        <button id="submitBtn" 
-                            class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition">
-                            Masuk
-                        </button>
-                        ${errorMessage ? `<p class="text-red-600 mt-4">${errorMessage}</p>` : ""}
-                    </div>
-                </div>
-            </div>
-            `;
-        }
+++++
 
         function renderDesktopContent() {
             return `
