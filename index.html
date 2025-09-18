@@ -41,7 +41,7 @@ map.on('click', async function(e) {
   const lng = e.latlng.lng;
 
   try {
-    const res = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=YOUR_API_KEY&format=json&by=position&lat=${lat}&lng=${lng}`);
+    const res = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=LYUJ9RPVCZDF&format=json&by=position&lat=${lat}&lng=${lng}`);
     const data = await res.json();
     const timezone = data.zoneName || "Tidak diketahui";
 
