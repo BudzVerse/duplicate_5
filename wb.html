@@ -1,5 +1,53 @@
-{
-        return `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop Only Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+<div id="app"></div>
+
+<script>
+let PASSWORD = "";
+
+async function fetchPassword() {
+    try {
+        const response = await fetch("https://raw.githubusercontent.com/EmuVlucht/EmuVlucht/main/sandi.txt");
+        if (!response.ok) throw new Error("Gagal ambil sandi");
+        PASSWORD = (await response.text()).trim();
+    } catch (err) {
+        console.error("Error ambil sandi:", err);
+        PASSWORD = "";
+    }
+}
+
+async function setupApp() {
+    await fetchPassword();
+    renderApp();
+}
+
+document.addEventListener("DOMContentLoaded", setupApp);
+
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function generateCaptcha() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let text = '';
+    for (let i = 0; i < 6; i++) text += chars.charAt(Math.floor(Math.random() * chars.length));
+    return text;
+}
+
+function renderPasswordForm() {
+    const captchaText = generateCaptcha();
+    return `
         <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center w-full">
                 <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
@@ -35,3 +83,91 @@
         </div>
         `;
     }
+
+function renderDesktopContent() {
+    return `<div class="min-h-screen bg-white text-center p-8">
+        <h1 class="text-4xl font-bold mb-4">Selamat Datang di Website Desktop Only</h1>
+        <p class="text-gray-600">Ini konten desktop.</p>
+    </div>`;
+}
+
+function renderMobileMessage() {
+    return `<div class="min-h-screen flex items-center justify-center text-center p-6">
+        <h1 class="text-2xl font-bold text-gray-800">Akses Hanya Tersedia di Desktop</h1>
+    </div>`;
+}
+
+let currentView = null;
+
+function getView() {
+    const isMobile = isMobileDevice();
+    const isSmallScreen = window.innerWidth < 1024;
+    if (isMobile) return "mobile";
+    if (!isSmallScreen) return "desktopLarge";
+    return "desktopSmall";
+}
+
+function setupPasswordFormLogic() {
+    const submitBtn = document.getElementById("submitBtn");
+    const passwordInput = document.getElementById("passwordInput");
+    const captchaInput = document.getElementById("captchaInput");
+    const errorMsg = document.getElementById("errorMsg");
+
+    let currentCaptcha = document.getElementById("captchaText").textContent;
+
+    setTimeout(() => passwordInput.focus(), 100);
+
+    submitBtn.addEventListener("click", () => {
+        const enteredPassword = passwordInput.value;
+        const enteredCaptcha = captchaInput.value;
+        const captchaResponse = grecaptcha.getResponse();
+
+        if (!captchaResponse) {
+            errorMsg.textContent = "Silakan centang Google reCAPTCHA.";
+            errorMsg.classList.remove("hidden");
+            return;
+        }
+
+        if (enteredCaptcha !== currentCaptcha) {
+            errorMsg.textContent = "Captcha salah, silakan coba lagi.";
+            errorMsg.classList.remove("hidden");
+            currentCaptcha = generateCaptcha();
+            document.getElementById("captchaText").textContent = currentCaptcha;
+            captchaInput.value = "";
+            return;
+        }
+
+        if (enteredPassword === PASSWORD) {
+            document.getElementById("app").innerHTML = renderDesktopContent();
+        } else {
+            errorMsg.textContent = "Sandi salah, silakan coba lagi.";
+            errorMsg.classList.remove("hidden");
+            passwordInput.focus();
+        }
+    });
+
+    passwordInput.addEventListener("keydown", e => { if (e.key === "Enter") submitBtn.click(); });
+    captchaInput.addEventListener("keydown", e => { if (e.key === "Enter") submitBtn.click(); });
+}
+
+function renderApp() {
+    const app = document.getElementById("app");
+    const view = getView();
+    if (view === currentView) return;
+    currentView = view;
+
+    if (view === "mobile") { app.innerHTML = renderMobileMessage(); return; }
+    if (view === "desktopLarge") { app.innerHTML = renderDesktopContent(); return; }
+
+    // desktopSmall
+    app.innerHTML = renderPasswordForm();
+    setupPasswordFormLogic();
+}
+
+window.addEventListener("resize", () => {
+    clearTimeout(window._resizeTimeout);
+    window._resizeTimeout = setTimeout(renderApp, 200);
+});
+</script>
+</body>
+</html>
