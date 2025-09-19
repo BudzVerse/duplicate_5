@@ -45,36 +45,7 @@ function generateCaptcha() {
     return text;
 }
 
-function renderPasswordForm() {
-    const captchaText = generateCaptcha();
-    return `
-    <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-8 max-w-md text-center w-full">
-            <h1 class="text-2xl font-bold text-gray-800 mb-2">Akses Hanya Tersedia di Desktop</h1>
-            <p class="text-gray-600 mb-6">Website ini dirancang khusus untuk pengalaman desktop.</p>
-
-            <div class="bg-gray-100 p-6 rounded-lg mt-6">
-                <h2 class="text-xl font-bold mb-4">Masukkan Sandi untuk Akses</h2>
-                <input id="passwordInput" type="password" placeholder="Sandi" 
-                    autocomplete="off" inputmode="text"
-                    class="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-
-                <!-- Google reCAPTCHA v2 -->
-                <div class="g-recaptcha mb-4" data-sitekey="6LcJEc4rAAAAAPT33TiGGNdmCrAnifNLlnmzkeB1"></div>
-
-                <!-- Captcha gambar sederhana -->
-                <div class="mb-4">
-                    <p id="captchaText" class="mb-2 font-bold text-lg">${captchaText}</p>
-                    <input id="captchaInput" placeholder="Masukkan teks captcha" class="w-full p-2 border rounded" />
-                </div>
-
-                <button id="submitBtn" class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition">Masuk</button>
-                <p id="errorMsg" class="text-red-600 mt-4 hidden"></p>
-            </div>
-        </div>
-    </div>
-    `;
-}
+function renderPasswordForm() ++
 
 function renderDesktopContent() {
         return `
