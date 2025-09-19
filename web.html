@@ -183,7 +183,7 @@ function renderDesktopContent() {
     }
 
 function renderMobileMessage() {
-				return `
+    return `{
 <div class="min-h-screen relative flex items-center justify-center p-6" style="background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; animation: gradient 15s ease infinite;">
     <!-- Floating shapes -->
     <div class="floating-shapes absolute w-full h-full top-0 left-0 -z-10 overflow-hidden" id="shapes-container"></div>
@@ -244,12 +244,12 @@ function createShapes() {
         const animationDelay = Math.random() * 5;
         const color = colors[Math.floor(Math.random() * colors.length)];
 
-        shape.style.width = `${size}px`;
-        shape.style.height = `${size}px`;
-        shape.style.left = `${left}%`;
+        shape.style.width = \`\${size}px\`;
+        shape.style.height = \`\${size}px\`;
+        shape.style.left = \`\${left}%\`;
         shape.style.background = color;
-        shape.style.animationDuration = `${animationDuration}s`;
-        shape.style.animationDelay = `${animationDelay}s`;
+        shape.style.animationDuration = \`\${animationDuration}s\`;
+        shape.style.animationDelay = \`\${animationDelay}s\`;
 
         container.appendChild(shape);
     }
@@ -257,8 +257,8 @@ function createShapes() {
 
 document.addEventListener('DOMContentLoaded', createShapes);
 </script>
-`;
-		}
+}`;
+}
 
 let currentView = null;
 
